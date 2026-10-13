@@ -1,11 +1,4 @@
-import json
 from fetch_data_from_api import get_animal_data
-
-
-def load_data(file_path):
-    """Loads a JSON file."""
-    with open(file_path, "r", encoding="utf-8") as handle:
-        return json.load(handle)
 
 
 def serialize_animal(animal_obj):
@@ -32,8 +25,9 @@ def serialize_animal(animal_obj):
     # Dann ersten Ort aus Locations zuordnen und ausgeben
     locations = animal_obj.get('locations')
     if locations:
-        erster_ort = locations[0]
-        output += f'<li class="card__detail-item"><strong>Location:</strong> {erster_ort}</li>'
+        # erster_ort = locations[0]
+        orte_text = ", ".join(locations) # Zusammenfügen, falls es mehr als eine Location gibt
+        output += f'<li class="card__detail-item"><strong>Location:</strong> {orte_text}</li>'
 
     # Sind Characteristics vorhanden? Dann Type zuordnen und ausgeben
     if characteristics:
@@ -74,14 +68,26 @@ def write_new_html(file_path, new_html):
         fileobj.write(new_html)
 
 
+def ask_user_animal_name():
+    animal_name = input("Enter a name of an animal: ")
+    return animal_name.strip()
+
+
 def main():
-    # animals_data = load_data('animals_data.json')
-    # Wird ersetzt durch lesen der API:
-    animals_data = get_animal_data("fox")
+    animal_name = ask_user_animal_name()
+    animals_data = get_animal_data(animal_name) # Daten von API holen
+
+    # Guard Clause, falls leere Liste zurückkommt
+    if not animals_data:
+        print(f"The animal '{animal_name}' does not exist.")
+        return  # Bricht ab, ohne HTML zu generieren
+
     animal_information = get_animal_information(animals_data)
     html_template = load_html('animals_template.html')
     new_html = replace_template_placeholders(html_template, animal_information)
     write_new_html('animals.html', new_html)
+
+    print("Website was successfully generated to the file animals.html.")
 
 
 if __name__ == '__main__':
