@@ -25,9 +25,12 @@ def serialize_animal(animal_obj):
     # Dann ersten Ort aus Locations zuordnen und ausgeben
     locations = animal_obj.get('locations')
     if locations:
-        # erster_ort = locations[0]
-        orte_text = ", ".join(locations) # Zusammenfügen, falls es mehr als eine Location gibt
-        output += f'<li class="card__detail-item"><strong>Location:</strong> {orte_text}</li>'
+        orte_text = ", ".join(locations)  # Zusammenfügen, falls es mehr als eine Location gibt
+        if len(locations) > 1:
+            label = "Locations"
+        else:
+            label = "Location"
+        output += f'<li class="card__detail-item"><strong>{label}:</strong> {orte_text}</li>'
 
     # Sind Characteristics vorhanden? Dann Type zuordnen und ausgeben
     if characteristics:
@@ -42,7 +45,7 @@ def serialize_animal(animal_obj):
 
 
 def get_animal_information(animals_data):
-    """Shows information about animal (animals_data) from JSON file."""
+    """Shows information about animal (animals_data)."""
     output = ''
     for animal_obj in animals_data:
         output += serialize_animal(animal_obj)
@@ -69,25 +72,26 @@ def write_new_html(file_path, new_html):
 
 
 def ask_user_animal_name():
+    """Asks user to enter animal name."""
     animal_name = input("Enter a name of an animal: ")
     return animal_name.strip()
 
 
 def main():
     animal_name = ask_user_animal_name()
-    animals_data = get_animal_data(animal_name) # Daten von API holen
+    animals_data = get_animal_data(animal_name)  # Daten von API holen
 
     # Guard Clause, falls leere Liste zurückkommt
     if not animals_data:
-        print(f"The animal '{animal_name}' does not exist.")
-        return  # Bricht ab, ohne HTML zu generieren
+        animal_information = f'<h2>Das Tier "{animal_name}" existiert nicht.</h2>'
+        print("Animal does not exist. Fallback-Website was generated to the file animals.html.")
+    else:
+        animal_information = get_animal_information(animals_data)
+        print("Website was successfully generated to the file animals.html.")
 
-    animal_information = get_animal_information(animals_data)
     html_template = load_html('animals_template.html')
     new_html = replace_template_placeholders(html_template, animal_information)
     write_new_html('animals.html', new_html)
-
-    print("Website was successfully generated to the file animals.html.")
 
 
 if __name__ == '__main__':
