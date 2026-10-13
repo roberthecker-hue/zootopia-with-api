@@ -1,9 +1,10 @@
 import json
+from fetch_data_from_api import get_animal_data
 
 
 def load_data(file_path):
     """Loads a JSON file."""
-    with open(file_path, "r") as handle:
+    with open(file_path, "r", encoding="utf-8") as handle:
         return json.load(handle)
 
 
@@ -56,7 +57,7 @@ def get_animal_information(animals_data):
 
 def load_html(file_path):
     """ Loads a HTML file """
-    with open(file_path, "r") as fileobj:
+    with open(file_path, "r", encoding="utf-8") as fileobj:
         html_data = fileobj.read()
     return html_data
 
@@ -69,12 +70,14 @@ def replace_template_placeholders(html_template, animal_information):
 
 def write_new_html(file_path, new_html):
     """New file from HTML-template plus animal_information."""
-    with open(file_path, "w") as fileobj:
+    with open(file_path, "w", encoding="utf-8") as fileobj:
         fileobj.write(new_html)
 
 
 def main():
-    animals_data = load_data('animals_data.json')
+    # animals_data = load_data('animals_data.json')
+    # Wird ersetzt durch lesen der API:
+    animals_data = get_animal_data("fox")
     animal_information = get_animal_information(animals_data)
     html_template = load_html('animals_template.html')
     new_html = replace_template_placeholders(html_template, animal_information)
@@ -83,4 +86,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
