@@ -35,12 +35,17 @@ def fetch_data(animal):
 
     my_params = {"name": animal}  # 1. Parameter als Dictionary definieren
     my_headers = {"X-Api-Key": API_KEY} # 2. Header für den API-Key definieren
-    response = requests.get(URL, params=my_params, headers=my_headers) # 3. Die Anfrage abschicken
+
+    # Netzwerkanfrage wird versucht. Falls es nicht klappt (no Internet) -> Fehler ausgeben
+    try:
+        response = requests.get(URL, params=my_params, headers=my_headers) # 3. Die Anfrage abschicken
+    except requests.exceptions.RequestException as error:
+        print(f"Netzwerkfehler: {error}")
+        return []
 
     # Check: ist alles gut gelaufen? Sonst: Fehler anzeigen und leere Liste zurück.
     if response.status_code == 200:
         return response.json()
     else:
-        print(f"Error: Status Code = {response.status_code}")
-        data = []
-        return data
+        print(f"Server Error: Status Code = {response.status_code}")
+        return []
