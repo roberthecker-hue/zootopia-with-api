@@ -1,4 +1,4 @@
-from fetch_data_from_api import get_animal_data
+import data_fetcher
 
 
 def serialize_animal(animal_obj):
@@ -79,7 +79,7 @@ def ask_user_animal_name():
 
 def main():
     animal_name = ask_user_animal_name()
-    animals_data = get_animal_data(animal_name)  # Daten von API holen
+    animals_data = data_fetcher.fetch_data(animal_name)  # Daten von API holen
 
     # Guard Clause, falls leere Liste zurückkommt
     if not animals_data:
